@@ -20,10 +20,11 @@ Thumbs.db
 # Logs
 *.log
 
-# Documentos, fichas y estudios de mercado
-*Ficha*
-*Estudio*
-*.pdf
-*.docx
+# Documentos personales y scripts locales especificos
+Estudio_Mercado_Dolores_Cuantificados_Biotech.md
+Ficha_Alineacion_ByronCalderon.docx
+Ficha_Alineacion_ByronCalderon.html
+Ficha_Alineacion_ByronCalderon.md
+Ficha_Alineacion_ByronCalderon.pdf
+Guia_Maestra_Programa_y_Playbook_IA.md
 fill_and_convert.py
-*Guia_Maestra*
