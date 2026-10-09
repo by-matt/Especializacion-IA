@@ -1,11 +1,28 @@
+# Entornos virtuales
 venv/
 .venv/
+env/
+
+# Variables de entorno y secretos
 .env
+
+# Cachés y compilados de Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+
+# Archivos del sistema operativo y del editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
 
 # Documentos, fichas y estudios de mercado
 *Ficha*
 *Estudio*
 *.pdf
 *.docx
+fill_and_convert.py
