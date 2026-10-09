@@ -3,3 +3,9 @@ venv/
 .env
 __pycache__/
 *.pyc
+
+# Documentos, fichas y estudios de mercado
+*Ficha*
+*Estudio*
+*.pdf
+*.docx
