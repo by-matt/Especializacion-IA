@@ -49,6 +49,17 @@ def extraer_texto(datos: dict) -> str:
         raise RuntimeError("La respuesta no trae el texto generado en el lugar esperado.")
 
 
+def calcular_costo(datos: dict, precio_entrada: float, precio_salida: float) -> float:
+    """Calcula el costo monetario en USD a partir de usageMetadata y los precios por token."""
+    try:
+        uso = datos["usageMetadata"]
+        tokens_entrada = uso["promptTokenCount"]
+        tokens_salida = uso["candidatesTokenCount"]
+        return (tokens_entrada * precio_entrada) + (tokens_salida * precio_salida)
+    except (KeyError, TypeError):
+        raise RuntimeError("La respuesta no contiene 'usageMetadata' o los conteos de tokens esperados.")
+
+
 def obtener_dato_de_prueba(pregunta: str) -> str:
     """Orquesta el flujo completo de consulta delegando en las funciones atomicas protegidas."""
     url, body = armar_peticion(pregunta)
@@ -65,8 +76,27 @@ if __name__ == "__main__":
 
     print("\n=== TEST 2: Camino nominal exitoso con pregunta valida ===")
     try:
-        resultado = obtener_dato_de_prueba("Confirma en una frase corta que esta conexion funciona")
+        url, body = armar_peticion("Confirma en una frase corta que esta conexion funciona")
+        datos = enviar_peticion(url, body)
+        resultado = extraer_texto(datos)
         print("[RESPUESTA EXITOSA]:")
         print(resultado.strip())
+        
+        # Metadatos de uso y costo en vivo (referencia gemini-2.5-flash)
+        costo_real = calcular_costo(datos, 0.000000075, 0.00000030)
+        tokens_in = datos["usageMetadata"]["promptTokenCount"]
+        tokens_out = datos["usageMetadata"]["candidatesTokenCount"]
+        print(f"[METRICAS EN VIVO]: Entrada: {tokens_in} tokens | Salida: {tokens_out} tokens | Costo: ${costo_real:.8f} USD")
     except (ValueError, RuntimeError) as error:
         print("No se pudo completar la operacion:", error)
+
+    print("\n=== TEST 3: Calculo de costo con metadatos sinteticos de la leccion ===")
+    datos_leccion = {
+        "usageMetadata": {
+            "promptTokenCount": 850,
+            "candidatesTokenCount": 320,
+            "totalTokenCount": 1170,
+        }
+    }
+    costo_sintetico = calcular_costo(datos_leccion, 0.00000010, 0.00000040)
+    print(f"[COSTO SINTETICO]: ${costo_sintetico:.6f} USD (Esperado exacto: $0.000213 USD)")
