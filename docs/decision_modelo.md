@@ -37,7 +37,7 @@ La siguiente tabla consolida los precios oficiales de lista de Google AI Studio 
 | :--- | :--- | :--- | :--- |
 | **Costo por 1.000 tokens de entrada** | **$0.000075 USD** ($0.075 / 1M tokens) | **$0.001250 USD** ($1.25 / 1M tokens) | Flash es **16.6× más económico** |
 | **Costo por 1.000 tokens de salida** | **$0.000300 USD** ($0.300 / 1M tokens) | **$0.005000 USD** ($5.00 / 1M tokens) | Flash es **16.6× más económico** |
-| **Latencia promedio observada** | **1.84 segundos** (Medido en terminal) | **4.92 segundos** (Generación densa) | Flash es **2.67× más rápido** |
+| **Latencia promedio observada (4 pruebas)** | **1.84 segundos** (Medido en terminal) | **4.92 segundos** (Generación densa) | Flash es **2.67× más rápido** |
 | **Calidad de respuesta para el caso** | **Excelente:** Respuestas directas, concisas y sin divagaciones. | **Muy buena:** Mayor desarrollo teórico y profundidad innecesaria. | Calidad equivalente para respuestas cortas |
 | **Tolerancia a límites de cuota (RPM)** | Límite alto en cuotas estándar; cero bloqueos. | Cuotas estrictas; propenso a `HTTP 429`. | Flash ofrece máxima resiliencia |
 | **Fecha de toma de datos** | **20 de Octubre de 2026** | **20 de Octubre de 2026** | Datos actualizados y vigentes |
@@ -63,18 +63,36 @@ $$\text{Costo por petición (Pro)} = (500 \times 0.000001250) + (150 \times 0.00
 
 ---
 
-## 5. Decisión Adoptada
+## 5. Decisión Adoptada y Justificación Técnica
 
 Se adopta formalmente **`gemini-2.5-flash`** como el modelo titular de la miniaplicación.
 
-### Argumentación Técnica:
+### A. Por qué se eligió `gemini-2.5-flash`:
 1. **La ley del caso de uso:** No existe "el mejor modelo" en abstracto. Para consultas directas, resúmenes y extracción de datos, la capacidad analítica de `gemini-2.5-flash` resuelve la necesidad al 100%. Pagar 16 veces más por tokens de `gemini-2.5-pro` para la misma respuesta es un desperdicio de presupuesto.
 2. **SLA y retención de usuario:** Una latencia de ~1.8 segundos ofrece una respuesta fluida para el usuario final, mientras que ~5 segundos de pantalla en blanco genera fricción y abandono.
 3. **Resiliencia de cuotas:** Permite soportar ráfagas de usuarios sin disparar errores de saturación `HTTP 429 RESOURCE_EXHAUSTED`.
 
+### B. Por qué se descartó la opción alternativa (`gemini-2.5-pro`):
+1. **Sobrecosto desproporcionado (16.6×):** En un producto de consulta frecuente, multiplicar la factura por 16.6 veces sin un retorno directo de valor para el usuario final rompe la viabilidad financiera del proyecto.
+2. **Degradación de latencia (2.7× más lento):** Pasar de 1.84 segundos a casi 5 segundos por petición afecta negativamente la experiencia del usuario, forzando a implementar streaming o spinners prolongados innecesariamente.
+3. **Restricción de disponibilidad y cuotas:** En los niveles de acceso estándar de la API, los modelos Pro sufren límites de tasa severos que derivan en errores frecuentes de cuota agotada (`HTTP 429`), comprometiendo la estabilidad operativa del servicio.
+
 ---
 
-## 6. Consecuencias y Compromisos (Trade-offs)
+## 6. Conexión con la Arquitectura del Sistema
+
+La elección de `gemini-2.5-flash` se encuentra directamente integrada en la arquitectura de la miniaplicación desarrollada en el Bloque 8:
+
+![Diagrama de Arquitectura de la Miniaplicación](diagrama_arquitectura.png)
+
+Como se visualiza en el diagrama:
+1. `armar_peticion()` fija el endpoint en `gemini-2.5-flash` protegiendo la credencial leída desde `.env`.
+2. `enviar_peticion()` despacha el payload hacia la nube de Google y recibe el JSON con `candidates` y `usageMetadata`.
+3. `calcular_costo()` procesa en vivo las tarifas de `gemini-2.5-flash` ($0.075 / $0.30 por 1M tokens), alimentando la capa de telemetría FinOps del sistema.
+
+---
+
+## 7. Consecuencias y Compromisos (Trade-offs)
 
 * **Consecuencias Positivas:**
   * Presupuesto operativo predecible y optimizado (ahorro del 94%).
@@ -85,7 +103,7 @@ Se adopta formalmente **`gemini-2.5-flash`** como el modelo titular de la miniap
 
 ---
 
-## 7. Referencias y Evidencia en el Repositorio
+## 8. Referencias y Evidencia en el Repositorio
 * **Módulo de Código:** [`src/consumir_gemini.py`](../src/consumir_gemini.py)
 * **Diagrama de Arquitectura:** [`docs/diagrama_arquitectura.png`](diagrama_arquitectura.png)
 * **Memoria de Arquitectura:** [`docs/arquitectura.md`](arquitectura.md)
