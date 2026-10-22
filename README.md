@@ -126,13 +126,34 @@ python prompts/test_consistencia.py
 ```
 *Evalúa los 3 prompts del banco en 3 repeticiones independientes contra la API real y actualiza `prompts/registro_resultados.json`.*
 
+### Diagnóstico Aislado y Ciclo de Vida de Modelos (Google AI Studio)
+
+> ℹ️ **Disponibilidad Dinámica de Modelos por parte de Google:**  
+> Google actualiza y retira periódicamente versiones de sus modelos generativos en función de las políticas de ciclo de vida de Google AI Studio y la antigüedad de la cuenta del desarrollador. Por ejemplo, modelos anteriores como `gemini-2.5-flash` pueden no estar disponibles para cuentas o API keys de reciente creación (retornando `HTTP 404 NOT_FOUND`), siendo reemplazados oficialmente por `gemini-3.8-flash`.
+>
+> **Adaptabilidad desacoplada (`GEMINI_MODEL`):**  
+> Para evitar tocar el código ante cambios de habilitación de Google, el sistema lee el modelo dinámicamente desde el archivo `.env`:
+> ```ini
+> # Modelos recomendados según la habilitación de tu cuenta en Google AI Studio:
+> GEMINI_MODEL=gemini-3.8-flash      # Oficial para cuentas nuevas y existentes
+> # GEMINI_MODEL=gemini-flash-latest # Alias que enlaza a la versión estable más reciente
+> # GEMINI_MODEL=gemini-2.5-flash    # Disponible para cuentas con acceso histórico
+> ```
+>
+> **Script de diagnóstico rápido:**  
+> Si tienes dudas sobre el estado de tu clave o la habilitación de un modelo en tu cuenta, ejecuta el script de prueba directa:
+> ```bash
+> python src/test_api.py
+> ```
+> Este script muestra el código HTTP y el mensaje exacto de la API de Google, distinguiendo si el error es de credenciales (`400`), de modelo no habilitado (`404`) o de cuota/demanda (`429`/`503`).
+
 ---
 
 ## 4. Documentación Técnica de Arquitectura
 
 * 📐 **[Diagrama Conceptual de Arquitectura](docs/diagrama_arquitectura.png):** Diagrama box-and-arrow que modela la interacción entre capas, flujos de datos tipados, almacenamiento en `.env` y las bifurcaciones reactivas de `try/except`.
 * 📄 **[Memoria Técnica de Arquitectura](docs/arquitectura.md):** Documento formal con la descomposición de funciones, contratos de entrada/salida y políticas de tolerancia a fallos.
-* ⚖️ **[ADR-001: Decisión y Elección de Modelo](docs/decision_modelo.md):** Justificación económica, técnica y de latencia para seleccionar `gemini-2.5-flash` frente a `gemini-2.5-pro` (con proyección de ahorro a 100k req/mes de $8.25 vs $137.50).
+* ⚖️ **[ADR-001: Decisión y Elección de Modelo](docs/decision_modelo.md):** Justificación económica, técnica y de latencia para seleccionar la familia Flash frente a Pro, con addendum de migración a `gemini-3.8-flash`.
 * 🗂️ **[Banco de Prompts y Reporte de Consistencia](prompts/README.md):** Especificación de contratos JSON estructurados y evidencia de consistencia (9/9 ejecuciones conformes).
 
 ---
