@@ -34,7 +34,7 @@ def main():
     print("[RESPUESTA ESTRUCTURADA DEL MODELO]:", datos)
     print(f"[ACCESO DIRECTO]: Categoria={datos['categoria']} | Confianza={datos['confianza']}")
 
-    # Metricas FinOps en vivo (referencia gemini-2.5-flash)
+    # Metricas FinOps en vivo (referencia gemini-3.8-flash)
     costo = calcular_costo(respuesta, 0.000000075, 0.00000030)
     tokens_in = respuesta["usageMetadata"]["promptTokenCount"]
     tokens_out = respuesta["usageMetadata"]["candidatesTokenCount"]

@@ -21,7 +21,14 @@ def armar_peticion(
         raise ValueError("La pregunta no puede estar vacia")
     
     api_key = os.getenv("GEMINI_API_KEY")
-    modelo = "gemini-2.5-flash"
+    if not api_key or api_key.strip() in ("", "tu_clave_aqui"):
+        raise ValueError(
+            "No se encontró una clave válida en 'GEMINI_API_KEY'. "
+            "Por favor crea tu archivo '.env' en la raíz copiando '.env.example' "
+            "y agrega tu API key real obtenida en Google AI Studio (https://aistudio.google.com/)."
+        )
+
+    modelo = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={api_key}"
     
     body = {
@@ -50,19 +57,33 @@ def armar_peticion(
     return url, body
 
 
-def enviar_peticion(url: str, body: dict) -> dict:
-    """Envia la peticion HTTP capturando fallos de conexion y decodificacion JSON."""
-    try:
-        respuesta = requests.post(url, json=body, timeout=15)
-    except requests.exceptions.ConnectionError:
-        raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
-    except requests.exceptions.Timeout:
-        raise RuntimeError("El tiempo de espera con el servicio se agoto. Intenta de nuevo.")
+def enviar_peticion(url: str, body: dict, max_reintentos: int = 3) -> dict:
+    """Envia la peticion HTTP capturando fallos de red y reintentando ante picos transitorios 503."""
+    import time
 
-    try:
-        return respuesta.json()
-    except requests.exceptions.JSONDecodeError:
-        raise RuntimeError("La respuesta del servicio no llego en el formato esperado.")
+    for intento in range(max_reintentos):
+        try:
+            respuesta = requests.post(url, json=body, timeout=30)
+        except requests.exceptions.ConnectionError:
+            raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
+        except requests.exceptions.Timeout:
+            raise RuntimeError("El tiempo de espera con el servicio se agoto. Intenta de nuevo.")
+
+        try:
+            datos = respuesta.json()
+        except requests.exceptions.JSONDecodeError:
+            raise RuntimeError("La respuesta del servicio no llego en el formato esperado.")
+
+        if "error" in datos:
+            codigo = datos["error"].get("code", respuesta.status_code)
+            mensaje = datos["error"].get("message", "Error devuelto por la API de Gemini.")
+            # Si Google reporta alta demanda temporal (HTTP 503), reintentar con backoff
+            if codigo == 503 and intento < max_reintentos - 1:
+                time.sleep(2 * (intento + 1))
+                continue
+            raise RuntimeError(f"Error devuelto por la API de Gemini (HTTP {codigo}): {mensaje}")
+
+        return datos
 
 
 def extraer_texto(datos: dict) -> str:

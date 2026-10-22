@@ -1,4 +1,4 @@
-﻿import os
+import os
 import requests
 from dotenv import load_dotenv
 
@@ -9,8 +9,9 @@ if not api_key:
     print('ERROR: No se encontro GEMINI_API_KEY en el archivo .env')
     exit(1)
 
-# Endpoint oficial de Gemini
-url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}'
+# Endpoint oficial de Gemini (soporta seleccion dinamica via GEMINI_MODEL con default gemini-3.8-flash)
+modelo = os.getenv('GEMINI_MODEL', 'gemini-3.8-flash')
+url = f'https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={api_key}'
 headers = {'Content-Type': 'application/json'}
 payload = {
     'contents': [{

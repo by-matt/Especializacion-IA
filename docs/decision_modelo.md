@@ -107,3 +107,15 @@ Como se visualiza en el diagrama:
 * **Módulo de Código:** [`src/consumir_gemini.py`](../src/consumir_gemini.py)
 * **Diagrama de Arquitectura:** [`docs/diagrama_arquitectura.png`](diagrama_arquitectura.png)
 * **Memoria de Arquitectura:** [`docs/arquitectura.md`](arquitectura.md)
+
+---
+
+## 9. Addendum: Migración de Compatibilidad a `gemini-3.8-flash` (Octubre 2026)
+
+Conforme a la política de ciclo de vida de Google AI Studio, las nuevas cuentas de desarrollador requieren el uso de `gemini-3.8-flash`, desactivando `gemini-2.5-flash` para nuevos registros (HTTP 404). 
+
+Para garantizar la **máxima portabilidad y resiliencia**:
+1. Se migró el modelo por defecto a `gemini-3.8-flash`.
+2. Se desacopló la selección del modelo mediante la variable de entorno `GEMINI_MODEL`, permitiendo sobreescribir el modelo sin alterar el código fuente (`os.getenv("GEMINI_MODEL", "gemini-3.8-flash")`).
+3. Se mantiene idéntica estructura tarifaria y de latencia ultrabaja en el tier Flash.
+

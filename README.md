@@ -9,7 +9,7 @@
 
 ## 1. Descripción del Proyecto
 
-Esta miniaplicación implementa un cliente modular, desacoplado y seguro para el consumo de modelos generativos a través de la API REST directa de Google Gemini (`gemini-2.5-flash`), cumpliendo con los estándares de ingeniería de software corporativa:
+Esta miniaplicación implementa un cliente modular, desacoplado y seguro para el consumo de modelos generativos a través de la API REST directa de Google Gemini (`gemini-3.8-flash`), cumpliendo con los estándares de ingeniería de software corporativa:
 
 * **Arquitectura Modular (SRP):** Descomposición funcional estricta donde cada función atiende una sola responsabilidad (`armar_peticion`, `enviar_peticion`, `extraer_texto`, `parsear_respuesta_json`, `calcular_costo`).
 * **Canal Aislado de Sistema (`systemInstruction`):** Separación conceptual y estructural entre las directivas inmutables de rol/formato y las entradas dinámicas del usuario.
@@ -79,21 +79,28 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Paso 4: Configurar Variables de Entorno
-Copia la plantilla `.env.example` y crea el archivo `.env` con tu clave de API:
-* **Windows (PowerShell):**
-  ```powershell
-  Copy-Item .env.example .env
-  ```
-* **macOS / Linux:**
-  ```bash
-  cp .env.example .env
-  ```
+### Paso 4: Configurar Variables de Entorno (Obligatorio)
 
-Edita `.env` y asigna tu API key real:
-```ini
-GEMINI_API_KEY=AIzaSyTuClaveReal...
-```
+> ⚠️ **ACCIÓN REQUERIDA ANTES DE EJECUTAR:**  
+> Por principios de ciberseguridad, el archivo con credenciales `.env` **nunca se sube al repositorio** y no existirá tras clonarlo. Si intentas ejecutar la aplicación sin completar este paso, la API de Google rechazará la conexión con un error de autenticación.
+
+1. **Obtener credenciales:** Genera tu API Key gratuita en [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. **Crear el archivo `.env` a partir de la plantilla:**
+   * **Windows (PowerShell):**
+     ```powershell
+     Copy-Item .env.example .env
+     ```
+   * **macOS / Linux / WSL:**
+     ```bash
+     cp .env.example .env
+     ```
+3. **Configurar tu clave y modelo:** Abre el archivo `.env` en tu editor y asigna tu API Key real:
+   ```ini
+   GEMINI_API_KEY=AIzaSy...tu_clave_real_aqui
+   GEMINI_MODEL=gemini-3.8-flash
+   ```
+   > 💡 *Nota para usuarios de Windows:* Asegúrate de que el archivo se llame estrictamente `.env` y no `.env.txt`. Si utilizas el comando `Copy-Item .env.example .env` se nombrará correctamente de forma automática.
+
 
 ### Paso 5: Ejecutar la Miniaplicación Principal
 ```bash
@@ -148,7 +155,7 @@ En cumplimiento con el protocolo de verificación del Gate 1:
 
 | Criterio No Compensable | Validación Técnica | Estado |
 | :--- | :--- | :---: |
-| 🌐 **Que tu API funcione** | Peticiones HTTP reales contra `gemini-2.5-flash` retornando 200 OK y respuestas semánticamente precisas. | **Aprobado** ✅ |
+| 🌐 **Que tu API funcione** | Peticiones HTTP reales contra `gemini-3.8-flash` retornando 200 OK y respuestas semánticamente precisas. | **Aprobado** ✅ |
 | 🔄 **Que tu entorno sea reproducible** | Dependencias declaradas estrictamente en `requirements.txt` (`requests`, `python-dotenv`). | **Aprobado** ✅ |
 | 🔐 **Que las credenciales no queden expuestas** | Auditoría con `git log --all --oneline -- .env` (0 commits) y `.env` excluido en `.gitignore`. | **Aprobado (Zero Leaks)** ✅ |
 | ▶️ **Que tu código sea ejecutable** | Ejecución autónoma de `main.py` y `src/consumir_gemini.py` con Exit Code 0 y sin tracebacks. | **Aprobado** ✅ |
