@@ -1,12 +1,22 @@
+import json
 import os
+import re
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def armar_peticion(pregunta: str) -> tuple[str, dict]:
-    """Valida la entrada, lee credenciales y construye la URL y el body de la peticion."""
+def armar_peticion(
+    pregunta: str,
+    system_instruction: str = None,
+    response_schema: dict = None,
+) -> tuple[str, dict]:
+    """Valida la entrada, lee credenciales y construye la URL y el body de la peticion.
+    
+    Soporta opcionalmente instrucciones de sistema en un canal aislado ('systemInstruction')
+    y restriccion de esquema JSON estructurado mediante 'generationConfig'.
+    """
     if not pregunta or not pregunta.strip():
         raise ValueError("La pregunta no puede estar vacia")
     
@@ -23,6 +33,20 @@ def armar_peticion(pregunta: str) -> tuple[str, dict]:
             }
         ]
     }
+
+    if system_instruction and system_instruction.strip():
+        body["systemInstruction"] = {
+            "parts": [
+                {"text": system_instruction.strip()}
+            ]
+        }
+
+    if response_schema is not None:
+        body["generationConfig"] = {
+            "responseMimeType": "application/json",
+            "responseSchema": response_schema,
+        }
+
     return url, body
 
 
@@ -47,6 +71,32 @@ def extraer_texto(datos: dict) -> str:
         return datos["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError):
         raise RuntimeError("La respuesta no trae el texto generado en el lugar esperado.")
+
+
+def parsear_respuesta_json(texto: str, claves_requeridas: list[str] = None) -> dict:
+    """Sanitiza delimitadores markdown y parsea la respuesta a diccionario Python.
+    
+    Remueve bloques de markdown (```json ... ```) de forma tolerante a saltos de linea
+    y verifica que la salida contenga las claves obligatorias requeridas.
+    """
+    if not texto:
+        raise ValueError("El texto de respuesta esta vacio.")
+
+    texto_limpio = texto.strip()
+    texto_limpio = re.sub(r"^```(?:json)?\s*", "", texto_limpio)
+    texto_limpio = re.sub(r"\s*```$", "", texto_limpio)
+
+    try:
+        datos = json.loads(texto_limpio)
+    except json.JSONDecodeError:
+        raise ValueError("La respuesta del modelo no es JSON valido.")
+
+    if claves_requeridas:
+        for clave in claves_requeridas:
+            if clave not in datos:
+                raise ValueError(f"La respuesta no contiene la clave requerida: '{clave}'.")
+
+    return datos
 
 
 def calcular_costo(datos: dict, precio_entrada: float, precio_salida: float) -> float:
@@ -100,3 +150,29 @@ if __name__ == "__main__":
     }
     costo_sintetico = calcular_costo(datos_leccion, 0.00000010, 0.00000040)
     print(f"[COSTO SINTETICO]: ${costo_sintetico:.6f} USD (Esperado exacto: $0.000213 USD)")
+
+    print("\n=== TEST 4: Salida estructurada forzada con schema JSON (Bloque 10) ===")
+    system_instruction = (
+        "Responde unicamente con un objeto JSON valido, sin texto adicional "
+        "y sin usar bloques de markdown. El JSON debe tener exactamente estas "
+        "claves: 'categoria' (string) y 'confianza' (numero entre 0 y 1)."
+    )
+    response_schema = {
+        "type": "OBJECT",
+        "properties": {
+            "categoria": {"type": "STRING"},
+            "confianza": {"type": "NUMBER"},
+        },
+        "required": ["categoria", "confianza"],
+    }
+    pregunta_usuario = "Necesito ayuda para resetear mi contraseña, no me llega el correo de verificación."
+    try:
+        url, body = armar_peticion(pregunta_usuario, system_instruction, response_schema)
+        respuesta_json = enviar_peticion(url, body)
+        texto = extraer_texto(respuesta_json)
+        datos = parsear_respuesta_json(texto, claves_requeridas=["categoria", "confianza"])
+        print("[DICCIONARIO PARSEADO]:", datos)
+        print("[TIPO CONFIRMADO]:", type(datos))
+        print(f"[ACCESO DIRECTO]: Categoria={datos['categoria']} | Confianza={datos['confianza']}")
+    except (ValueError, RuntimeError) as error:
+        print("Error en prueba de salida estructurada:", error)
