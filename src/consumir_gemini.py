@@ -57,33 +57,70 @@ def armar_peticion(
     return url, body
 
 
-def enviar_peticion(url: str, body: dict, max_reintentos: int = 3) -> dict:
-    """Envia la peticion HTTP capturando fallos de red y reintentando ante picos transitorios 503."""
+def enviar_peticion(url: str, body: dict, reintentos_por_modelo: int = 2) -> dict:
+    """Envia la peticion HTTP capturando fallos de red y conmutando automaticamente de modelo ante 503 o 404."""
     import time
 
-    for intento in range(max_reintentos):
-        try:
-            respuesta = requests.post(url, json=body, timeout=30)
-        except requests.exceptions.ConnectionError:
-            raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
-        except requests.exceptions.Timeout:
-            raise RuntimeError("El tiempo de espera con el servicio se agoto. Intenta de nuevo.")
+    # Identificar el modelo solicitado originalmente en la URL
+    match_modelo = re.search(r"/models/([^:]+):", url)
+    modelo_inicial = match_modelo.group(1) if match_modelo else "gemini-3.8-flash"
 
-        try:
-            datos = respuesta.json()
-        except requests.exceptions.JSONDecodeError:
-            raise RuntimeError("La respuesta del servicio no llego en el formato esperado.")
+    # Cadena de failover ordenado: modelo inicial -> gemini-flash-latest -> gemini-2.5-flash
+    cadena_modelos = [modelo_inicial]
+    for candidato in ["gemini-flash-latest", "gemini-2.5-flash"]:
+        if candidato not in cadena_modelos:
+            cadena_modelos.append(candidato)
 
-        if "error" in datos:
-            codigo = datos["error"].get("code", respuesta.status_code)
-            mensaje = datos["error"].get("message", "Error devuelto por la API de Gemini.")
-            # Si Google reporta alta demanda temporal (HTTP 503), reintentar con backoff
-            if codigo == 503 and intento < max_reintentos - 1:
-                time.sleep(2 * (intento + 1))
-                continue
-            raise RuntimeError(f"Error devuelto por la API de Gemini (HTTP {codigo}): {mensaje}")
+    ultimo_error = None
 
-        return datos
+    for idx, modelo_actual in enumerate(cadena_modelos):
+        # Ajustar la URL para el modelo en turno
+        url_actual = re.sub(r"/models/[^:]+:", f"/models/{modelo_actual}:", url)
+
+        for intento in range(reintentos_por_modelo):
+            try:
+                respuesta = requests.post(url_actual, json=body, timeout=30)
+            except requests.exceptions.ConnectionError:
+                raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
+            except requests.exceptions.Timeout:
+                if intento < reintentos_por_modelo - 1:
+                    time.sleep(2)
+                    continue
+                ultimo_error = "El tiempo de espera con el servicio se agoto."
+                break
+
+            try:
+                datos = respuesta.json()
+            except requests.exceptions.JSONDecodeError:
+                raise RuntimeError("La respuesta del servicio no llego en el formato esperado.")
+
+            if "error" in datos:
+                codigo = datos["error"].get("code", respuesta.status_code)
+                mensaje = datos["error"].get("message", "Error devuelto por la API de Gemini.")
+                ultimo_error = f"Error devuelto por la API de Gemini (HTTP {codigo}): {mensaje}"
+
+                # Si el modelo esta saturado (503) o no disponible para la cuenta (404)
+                if codigo in (503, 404):
+                    # Si es 503 y queda intento en el mismo modelo, reintentamos brevemente
+                    if codigo == 503 and intento < reintentos_por_modelo - 1:
+                        time.sleep(2)
+                        continue
+
+                    # Si quedan modelos en la cadena de failover, conmutar automaticamente
+                    if idx < len(cadena_modelos) - 1:
+                        siguiente_modelo = cadena_modelos[idx + 1]
+                        print(
+                            f"\n[AUTO-FAILOVER]: Modelo '{modelo_actual}' no disponible ({codigo}). "
+                            f"Conmutando automaticamente a '{siguiente_modelo}'..."
+                        )
+                        break  # Pasa al siguiente modelo en cadena_modelos
+
+                # Errores no recuperables por cambio de modelo (ej. 400 credencial invalida o 429 cuota)
+                raise RuntimeError(ultimo_error)
+
+            return datos
+
+    raise RuntimeError(ultimo_error or "No se pudo obtener respuesta valida de los modelos disponibles.")
 
 
 def extraer_texto(datos: dict) -> str:
