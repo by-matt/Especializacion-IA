@@ -24,8 +24,8 @@ def armar_peticion(
     if not api_key or api_key.strip() in ("", "tu_clave_aqui"):
         raise ValueError(
             "No se encontró una clave válida en 'GEMINI_API_KEY'. "
-            "Por favor crea tu archivo '.env' en la raíz copiando '.env.example' "
-            "y agrega tu API key real obtenida en Google AI Studio (https://aistudio.google.com/)."
+            "Se requiere configurar la clave en el archivo '.env' a partir de '.env.example' "
+            "obtenida en Google AI Studio (https://aistudio.google.com/)."
         )
 
     modelo = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")

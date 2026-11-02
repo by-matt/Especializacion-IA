@@ -26,7 +26,7 @@ def enviar_peticion(cuerpo: dict) -> dict:
         raise TimeoutError("No se pudo contactar al proveedor. Puede ser momentáneo.")
 
     if respuesta.status_code in (401, 403):
-        raise ValueError("Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY.")
+        raise ValueError("Credencial inválida o sin permiso. Verificar la variable GEMINI_API_KEY.")
 
     if respuesta.status_code == 400:
         es_clave_invalida = False
@@ -38,7 +38,7 @@ def enviar_peticion(cuerpo: dict) -> dict:
         except Exception:
             pass
         if es_clave_invalida:
-            raise ValueError("Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY.")
+            raise ValueError("Credencial inválida o sin permiso. Verificar la variable GEMINI_API_KEY.")
 
     if respuesta.status_code == 429 or respuesta.status_code >= 500:
         raise TimeoutError("El proveedor no pudo procesar la petición. Hay que esperar y reintentar.")
