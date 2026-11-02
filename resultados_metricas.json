@@ -1,0 +1,162 @@
+[
+  {
+    "consulta": "¿Qué es Python?",
+    "referencia": "Python es un lenguaje de programación interpretado de alto nivel.",
+    "respuesta": "Python es un lenguaje de programación interpretado, de alto nivel y propósito general.",
+    "precision": 0.7692,
+    "cobertura": 1.0,
+    "f1": 0.8696
+  },
+  {
+    "consulta": "¿Cuándo se creó Python?",
+    "referencia": "Python fue creado en 1991 por Guido van Rossum.",
+    "respuesta": "Python fue creado en 1989 por Guido van Rossum, lanzado públicamente en 1991.",
+    "precision": 0.6923,
+    "cobertura": 1.0,
+    "f1": 0.8182
+  },
+  {
+    "consulta": "¿Qué es una lista en Python?",
+    "referencia": "Una lista es una colección ordenada y modificable de elementos.",
+    "respuesta": "Una lista en Python es una colección ordenada y mutable que permite elementos duplicados.",
+    "precision": 0.5714,
+    "cobertura": 0.8,
+    "f1": 0.6667
+  },
+  {
+    "consulta": "¿Qué es una tupla en Python?",
+    "referencia": "Una tupla es una colección ordenada e inmutable de elementos.",
+    "respuesta": "Una tupla es una estructura de datos ordenada e inmutable en Python.",
+    "precision": 0.6667,
+    "cobertura": 0.8,
+    "f1": 0.7273
+  },
+  {
+    "consulta": "¿Qué es un diccionario en Python?",
+    "referencia": "Un diccionario almacena pares clave valor desordenados o mapeados.",
+    "respuesta": "Un diccionario es una colección que almacena elementos en pares de clave y valor.",
+    "precision": 0.4286,
+    "cobertura": 0.6667,
+    "f1": 0.5217
+  },
+  {
+    "consulta": "¿Para qué sirve la función len en Python?",
+    "referencia": "La función len devuelve la cantidad de elementos de un objeto o colección.",
+    "respuesta": "len se usa para obtener el número total de elementos contenidos en una secuencia o colección.",
+    "precision": 0.3125,
+    "cobertura": 0.3846,
+    "f1": 0.3448
+  },
+  {
+    "consulta": "¿Qué hace el operador is en Python?",
+    "referencia": "El operador is compara la identidad de dos objetos en memoria.",
+    "respuesta": "El operador is verifica si dos variables apuntan al mismo objeto en memoria.",
+    "precision": 0.4615,
+    "cobertura": 0.5455,
+    "f1": 0.5
+  },
+  {
+    "consulta": "¿Qué es un entorno virtual en Python?",
+    "referencia": "Un entorno virtual es un directorio aislado que contiene dependencias específicas para un proyecto.",
+    "respuesta": "Es un espacio aislado para instalar librerías independientes del sistema global.",
+    "precision": 0.3636,
+    "cobertura": 0.2857,
+    "f1": 0.32
+  },
+  {
+    "consulta": "¿Cuál es la diferencia entre append y extend en una lista?",
+    "referencia": "append agrega un único elemento al final mientras que extend concatena los elementos de un iterable.",
+    "respuesta": "append añade un elemento al final de la lista y extend añade múltiples elementos iterables.",
+    "precision": 0.5333,
+    "cobertura": 0.5,
+    "f1": 0.5161
+  },
+  {
+    "consulta": "¿Qué significa que Python sea tipado dinámico?",
+    "referencia": "Significa que el tipo de una variable se determina en tiempo de ejecución y no requiere declaración previa.",
+    "respuesta": "El tipado dinámico implica que no se declara el tipo de datos al crear una variable.",
+    "precision": 0.5,
+    "cobertura": 0.4444,
+    "f1": 0.4706
+  },
+  {
+    "consulta": "¿Qué es un generador en Python?",
+    "referencia": "Un generador es una función que produce una secuencia de valores utilizando yield sin almacenarlos todos en memoria.",
+    "respuesta": "Es una función especial que retorna un iterador usando yield en lugar de return.",
+    "precision": 0.5714,
+    "cobertura": 0.4444,
+    "f1": 0.5
+  },
+  {
+    "consulta": "¿Qué hace la sentencia break en un bucle?",
+    "referencia": "La sentencia break termina inmediatamente la ejecución del bucle actual.",
+    "respuesta": "break interrumpe y sale del bucle de forma inmediata.",
+    "precision": 0.3333,
+    "cobertura": 0.3,
+    "f1": 0.3158
+  },
+  {
+    "consulta": "¿Qué es un decorador en Python?",
+    "referencia": "Un decorador es una función que modifica o extiende el comportamiento de otra función sin cambiar su código fuente.",
+    "respuesta": "Un decorador permite alterar o envolver la funcionalidad de una función existente.",
+    "precision": 0.5,
+    "cobertura": 0.3158,
+    "f1": 0.3871
+  },
+  {
+    "consulta": "¿Para qué se utiliza el bloque try except?",
+    "referencia": "Se utiliza para capturar y manejar excepciones o errores en tiempo de ejecución de forma controlada.",
+    "respuesta": "try except sirve para gestionar errores y excepciones durante la ejecución del programa.",
+    "precision": 0.3846,
+    "cobertura": 0.3125,
+    "f1": 0.3448
+  },
+  {
+    "consulta": "¿Qué devuelve la función range en Python?",
+    "referencia": "range devuelve una secuencia inmutable de números enteros generados bajo demanda.",
+    "respuesta": "range genera una secuencia de números enteros en un intervalo determinado.",
+    "precision": 0.5455,
+    "cobertura": 0.5455,
+    "f1": 0.5455
+  },
+  {
+    "consulta": "¿Qué es un módulo en Python?",
+    "referencia": "Un módulo es un archivo con extensión .py que contiene definiciones de funciones, clases y variables reutilizables.",
+    "respuesta": "Un módulo es simplemente un archivo .py que agrupa código reutilizable.",
+    "precision": 0.6364,
+    "cobertura": 0.4118,
+    "f1": 0.5
+  },
+  {
+    "consulta": "¿Cuál es el valor booleano de una lista vacía?",
+    "referencia": "Una lista vacía se evalúa como False en un contexto booleano.",
+    "respuesta": "En Python una lista sin elementos tiene valor de verdad False.",
+    "precision": 0.3636,
+    "cobertura": 0.3636,
+    "f1": 0.3636
+  },
+  {
+    "consulta": "¿Qué es pip en Python?",
+    "referencia": "pip es el administrador de paquetes estándar para instalar y gestionar librerías en Python.",
+    "respuesta": "pip es la herramienta oficial para descargar e instalar paquetes de PyPI.",
+    "precision": 0.5,
+    "cobertura": 0.4286,
+    "f1": 0.4615
+  },
+  {
+    "consulta": "¿Qué es GIL en Python?",
+    "referencia": "El Global Interpreter Lock es un mecanismo que sincroniza la ejecución de hilos permitiendo que solo un hilo ejecute bytecode a la vez.",
+    "respuesta": "El GIL es un candado que restringe la ejecución a un solo hilo por proceso de Python.",
+    "precision": 0.6471,
+    "cobertura": 0.4783,
+    "f1": 0.55
+  },
+  {
+    "consulta": "¿Cómo se define una función anónima en Python?",
+    "referencia": "Una función anónima se define utilizando la palabra clave lambda.",
+    "respuesta": "Se define con la palabra clave lambda para crear funciones pequeñas de una sola línea.",
+    "precision": 0.4667,
+    "cobertura": 0.7,
+    "f1": 0.56
+  }
+]
