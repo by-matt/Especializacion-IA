@@ -11,6 +11,10 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 
+# Bases de datos vectoriales e índices locales (regenerables)
+vectorstore/
+vectorstore_ejemplo/
+
 # Archivos del sistema operativo y del editor
 .DS_Store
 Thumbs.db
