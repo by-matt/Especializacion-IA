@@ -1,0 +1,15 @@
+Fecha: 2026-11-10
+Configuracion: k=3, chunk_size=200, chunk_overlap=30
+
+0.33 1.00 ¿Qué hace el cliente si una llamada tarda demasiado tiempo?
+0.33 1.00 ¿Cuántas veces se reintenta ante un TimeoutError?
+0.33 1.00 ¿Qué ocurre si la clave de API es inválida o falla la autenticación?
+0.33 1.00 ¿Se reintentan los errores de autenticación en la plataforma?
+0.33 1.00 ¿Cómo se calcula el costo de una llamada al modelo?
+0.33 1.00 ¿Qué métricas se usan para tarifar cada mil tokens consumidos?
+0.33 1.00 ¿Cómo decide el agente autónomo qué herramienta debe utilizar?
+0.33 1.00 ¿El agente de la Unidad 2.4 requiere intervención para elegir su herramienta?
+0.33 1.00 ¿Por qué la suite completa de pruebas unitarias corre en menos de un segundo?
+0.00 n/a ¿Qué base de datos relacional PostgreSQL se utiliza en producción?
+
+promedio -> precision: 0.300 recall: 1.000
