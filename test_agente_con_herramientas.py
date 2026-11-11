@@ -1,15 +1,18 @@
 """
-Pruebas unitarias para el agente con herramientas (Bloque 21).
+Pruebas unitarias para el agente con herramientas y supervisión humana (Bloque 21 - 23).
+Autor: Byron Calderón González
 
-Verifica la invocación de herramientas, la correcta estructura de intermediate_steps
-y el comportamiento ante consultas generales.
+Verifica la invocación de herramientas, la correcta estructura de intermediate_steps,
+la supervisión humana con esperar_aprobacion y la persistencia de trazas.
 """
 
-from unittest.mock import MagicMock
-from langchain_core.messages import AIMessage
+import os
+from unittest.mock import patch
 from agente_con_herramientas import (
     calcular_costo_instancias,
     consultar_estado_servicio,
+    reiniciar_servicio_critico,
+    esperar_aprobacion,
 )
 
 
@@ -37,3 +40,23 @@ def test_calcular_costo_instancias_nominal():
 def test_calcular_costo_instancias_validacion_cero():
     resultado = calcular_costo_instancias.invoke({"instancias": 0})
     assert "número entero positivo" in resultado.lower()
+
+
+def test_reiniciar_servicio_aprobado():
+    with patch("agente_con_herramientas.esperar_aprobacion", return_value=True):
+        resultado = reiniciar_servicio_critico.invoke({
+            "nombre_servicio": "auth",
+            "motivo": "parche de seguridad urgente",
+        })
+        assert "Éxito" in resultado
+        assert "reiniciado correctamente" in resultado
+
+
+def test_reiniciar_servicio_rechazado():
+    with patch("agente_con_herramientas.esperar_aprobacion", return_value=False):
+        resultado = reiniciar_servicio_critico.invoke({
+            "nombre_servicio": "pagos",
+            "motivo": "prueba no autorizada",
+        })
+        assert "Operación CANCELADA" in resultado
+        assert "rechazado por falta de aprobación" in resultado
