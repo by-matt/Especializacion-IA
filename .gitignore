@@ -6,14 +6,15 @@ env/
 # Variables de entorno y secretos
 .env
 
-# Cachés y compilados de Python
+# Caches y compilados de Python
 __pycache__/
 *.py[cod]
 *.egg-info/
 
-# Bases de datos vectoriales e índices locales (regenerables)
+# Bases de datos vectoriales e indices locales (regenerables)
 vectorstore/
 vectorstore_ejemplo/
+indice_gate2/
 
 # Archivos del sistema operativo y del editor
 .DS_Store
@@ -23,13 +24,3 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Documentos personales y scripts locales especificos
-Estudio_Mercado_Dolores_Cuantificados_Biotech.md
-Ficha_Alineacion_ByronCalderon.docx
-Ficha_Alineacion_ByronCalderon.html
-Ficha_Alineacion_ByronCalderon.md
-Ficha_Alineacion_ByronCalderon.pdf
-Guia_Maestra_Programa_y_Playbook_IA.md
-Guia_Maestra_Programa_y_Playbook_IA_IDE.md
-fill_and_convert.py
