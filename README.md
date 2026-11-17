@@ -3,9 +3,9 @@
 > **Programa:** Especialización en Desarrollo con IA Generativa (Accenture & Skillnest)  
 > **Participante:** Byron Calderón González (`by-matt`)  
 > **Repositorio Oficial:** [https://github.com/by-matt/Especializacion-IA](https://github.com/by-matt/Especializacion-IA)  
-> **Estado de Entregas:**  
-> - **Gate 1 (Habilitación Técnica):** Completado — Calificación 7.0 / 7.0  
-> - **Gate 2 (Integración y Orquestación):** Completado — Cumplimiento al 100% de la Rúbrica y Criterios No Compensables  
+> **Estado del Proyecto:**  
+> - **Gate 1 (Habilitación Técnica):** Completado  
+> - **Gate 2 (Integración y Orquestación):** Entregado  
 
 ---
 
@@ -235,7 +235,7 @@ test_gate2.py::test_4_supervision_pausa_y_reanuda PASSED                 [100%]
 
 ## 6. Historial de Entregas Previas (Gate 1)
 
-Para consultar los detalles de la entrega del **Gate 1: Habilitación Técnica (Calificación 7.0/7.0)**:
+Para consultar los detalles de la entrega del **Gate 1: Habilitación Técnica**:
 - Cliente modular con reintentos y backoff exponencial (`cliente.py`).
 - Suite de consistencia de prompts con esquemas JSON estructurados (`prompts/`).
 - Memoria de arquitectura y ADR-001 (`docs/arquitectura.md`, `docs/decision_modelo.md`).
