@@ -107,7 +107,7 @@ def redactar_documento_decision(puntos: dict[str, int], ganadoras: list[str]) ->
     if len(ganadoras) > 1:
         lineas.append(f"**Empate técnico entre:** {', '.join(ganadoras)}")
     else:
-        lineas.append(f"**Técnica ganadora indiscutida:** {ganadoras[0]} ({puntos[ganadoras[0]]} puntos)")
+        lineas.append(f"**Estrategia seleccionada:** {ganadoras[0]} ({puntos[ganadoras[0]]} puntos)")
 
     lineas.extend([
         "",

@@ -10,7 +10,7 @@ Tras someter el caso al método cuantitativo de cinco criterios ponderados con e
 - **RAG:** 2 puntos
 - **Fine-tuning completo:** 1 puntos
 
-**Técnica ganadora indiscutida:** PEFT (5 puntos)
+**Estrategia seleccionada:** PEFT (5 puntos)
 
 ## 3. Técnica elegida y por qué
 Se selecciona **PEFT (Parameter-Efficient Fine-Tuning) mediante Adapters (LoRA)** como la estrategia óptima.
